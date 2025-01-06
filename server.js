@@ -130,26 +130,12 @@ async function handleFunctionCall(functionCall) {
 
 // Webhook endpoint
 app.post("/wati-webhook", async (req, res) => {
-  console.log("Message received:", req.body);
+  // console.log("Message received:", req.body);
 
   const { waId, text, conversationId, type } = req.body;
 
   // Only respond to messages from the specified numbers
-  if (
-    ![
-      "919205641320",
-      "918122581224",
-      "917725901111",
-      "18565658716",
-      "919100226460",
-      "918826956569",
-      "917275850307",
-      "919131293347",
-      "919660038530",
-      "919810123275",
-    ].includes(waId) ||
-    type !== "text"
-  ) {
+  if (!process.env.WHATSAPP_NUMBERS.includes(waId) || type !== "text") {
     return res.status(200).send("Message ignored");
   }
 
