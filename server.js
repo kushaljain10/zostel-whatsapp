@@ -6,7 +6,7 @@ const fs = require("fs");
 const OpenAI = require("openai");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3006;
 
 // Initialize DeepSeek client
 const client = new OpenAI({
