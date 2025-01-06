@@ -129,7 +129,7 @@ async function handleFunctionCall(functionCall) {
 }
 
 // Webhook endpoint
-app.post("/wati-webhook", async (req, res) => {
+app.post("/zostel-whatsapp/wati-webhook", async (req, res) => {
   // console.log("Message received:", req.body);
 
   const { waId, text, conversationId, type } = req.body;
