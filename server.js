@@ -14,68 +14,6 @@ const client = new OpenAI({
   baseURL: "https://api.deepseek.com/v1",
 });
 
-// Define available tools/functions
-const tools = [
-  {
-    type: "function",
-    function: {
-      name: "get_zostel_locations",
-      description: "Get a list of Zostel locations in a specific state or city",
-      parameters: {
-        type: "object",
-        properties: {
-          location: {
-            type: "string",
-            description: "The state or city to search for Zostel locations",
-          },
-        },
-        required: ["location"],
-      },
-    },
-  },
-  {
-    type: "function",
-    function: {
-      name: "check_availability",
-      description: "Check room availability at a specific Zostel location",
-      parameters: {
-        type: "object",
-        properties: {
-          location: {
-            type: "string",
-            description: "The Zostel location to check",
-          },
-          checkIn: {
-            type: "string",
-            description: "Check-in date in YYYY-MM-DD format",
-          },
-          checkOut: {
-            type: "string",
-            description: "Check-out date in YYYY-MM-DD format",
-          },
-        },
-        required: ["location", "checkIn", "checkOut"],
-      },
-    },
-  },
-];
-
-// Function implementations
-async function getZostelLocations(location) {
-  // Mock implementation - replace with actual API call
-  const locations = {
-    Rajasthan: ["Zostel Jaipur", "Zostel Udaipur", "Zostel Jodhpur"],
-    Himachal: ["Zostel Manali", "Zostel Kasol", "Zostel Bir"],
-    // Add more locations as needed
-  };
-  return locations[location] || [];
-}
-
-async function checkAvailability(location, checkIn, checkOut) {
-  // Mock implementation - replace with actual API call
-  return `Checking availability at ${location} from ${checkIn} to ${checkOut}...`;
-}
-
 // Store conversations in memory (you might want to use a database in production)
 const conversations = new Map();
 
@@ -159,37 +97,9 @@ app.post("/zostel-whatsapp/wati-webhook", async (req, res) => {
       top_p: 0.95,
       frequency_penalty: 0,
       presence_penalty: 0,
-      tools: tools,
     });
 
     const assistantMessage = response.choices[0].message;
-
-    // Handle function calls if present
-    if (assistantMessage.tool_calls) {
-      for (const toolCall of assistantMessage.tool_calls) {
-        const functionResult = await handleFunctionCall(toolCall.function);
-        messages.push(assistantMessage);
-        messages.push({
-          role: "tool",
-          tool_call_id: toolCall.id,
-          content: JSON.stringify(functionResult),
-        });
-
-        // Get final response after function call
-        const finalResponse = await client.chat.completions.create({
-          model: "deepseek-chat",
-          messages: messages,
-          temperature: 0.7,
-          max_tokens: 2000,
-          top_p: 0.95,
-          frequency_penalty: 0,
-          presence_penalty: 0,
-          tools: tools,
-        });
-
-        assistantMessage = finalResponse.choices[0].message;
-      }
-    }
 
     messages.push(assistantMessage);
 
