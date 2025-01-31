@@ -23,8 +23,8 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_kushal
-          chmod 600 ~/.ssh/id_kushal
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
         shell: bash
 
       # Step 4: Deploy to server via SSH
