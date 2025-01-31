@@ -30,5 +30,6 @@ jobs:
             git pull origin master
             npm install
             sudo systemctl reload nginx
+            pm2 restart zostel-whatsapp
           ENDSSH
         shell: bash
