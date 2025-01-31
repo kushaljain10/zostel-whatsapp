@@ -30,7 +30,7 @@ jobs:
       # Step 4: Deploy to server via SSH
       - name: Deploy to NGINX server
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-39-98 << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no ubuntu@dev.srv.zoworld.io << 'ENDSSH'
             # Go to the deployment folder
             cd /var/www/zostel-whatsapp
 
