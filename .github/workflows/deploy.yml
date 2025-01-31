@@ -1,0 +1,46 @@
+name: Deploy to NGINX Server
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repo
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      # Step 2 (Optional): Install dependencies & build
+      # Only do this if your site requires a build step (like npm install + npm run build).
+      # If it's purely static HTML/CSS, you can skip this.
+      - name: Install and Build
+        run: |
+          npm install
+
+      # Step 3: Copy SSH key from secrets so we can connect to the server
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_kushal
+          chmod 600 ~/.ssh/id_kushal
+        shell: bash
+
+      # Step 4: Deploy to server via SSH
+      - name: Deploy to NGINX server
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-39-98 << 'ENDSSH'
+            # Go to the deployment folder
+            cd /var/www/zostel-whatsapp
+
+            # Pull the latest changes from GitHub
+            git pull origin master
+
+            # If a build is needed, you can repeat the steps here:
+            npm install
+
+            # Optionally restart NGINX or any service if needed
+            sudo systemctl reload nginx
+          ENDSSH
+        shell: bash
